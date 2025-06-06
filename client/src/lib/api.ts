@@ -38,8 +38,9 @@ export async function apiFetch<T>(
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1';
+  console.log("Access token in server fetch api: ", accessToken);
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const res = await fetch(`${baseUrl}${path}`, {
     ...options,
@@ -84,11 +85,12 @@ export async function apiMutation<T>(
   options: RequestInit = {},
   retry = true
 ): Promise<ApiResponse<T>> {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1';
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   // Get access token from cookies
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
+
+  console.log("Access token in server mutation api: ", accessToken);
   const res = await fetch(`${baseUrl}${path}`, {
     method,
     credentials: 'include',
@@ -124,5 +126,3 @@ export async function apiMutation<T>(
     data: json?.data ?? (null as T)
   };
 }
-
-
