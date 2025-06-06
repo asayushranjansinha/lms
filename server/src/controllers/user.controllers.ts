@@ -75,7 +75,6 @@ export const updateUserProfileController = asyncHandler(
     user.website = website || user.website;
     user.location = location || user.location;
     user.gender = gender || user.gender;
-    user.dateOfBirth = dateOfBirth || user.dateOfBirth;
     user.phoneNumber = phoneNumber || user.phoneNumber;
 
     await user.save();

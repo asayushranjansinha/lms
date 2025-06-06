@@ -44,11 +44,13 @@ export interface DatabaseOptions {
 
 // Request types
 export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    role: string;
-  };
+  user:
+    | {
+        id: string;
+        email: string;
+        role: string;
+      }
+    | undefined;
 }
 
 export interface QueryParams {

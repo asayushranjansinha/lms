@@ -212,173 +212,173 @@ export const getUserStripePaymentsController = asyncHandler(
   }
 );
 
-/**
- * Stripe Webhook Controller
- */
-export const stripeWebhookController = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const sig = req.headers["stripe-signature"] as string;
-    let event: Stripe.Event;
+// /**
+//  * Stripe Webhook Controller
+//  */
+// export const stripeWebhookController = asyncHandler(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const sig = req.headers["stripe-signature"] as string;
+//     let event: Stripe.Event;
 
-    try {
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        sig,
-        config.STRIPE_WEBHOOK_SECRET
-      );
-    } catch (err) {
-      console.error("Webhook signature verification failed:", err);
-      throw new BadRequestError("Invalid webhook signature");
-    }
+//     try {
+//       event = stripe.webhooks.constructEvent(
+//         req.body,
+//         sig,
+//         config.STRIPE_WEBHOOK_SECRET
+//       );
+//     } catch (err) {
+//       console.error("Webhook signature verification failed:", err);
+//       throw new BadRequestError("Invalid webhook signature");
+//     }
 
-    // Handle the event
-    switch (event.type) {
-      case "checkout.session.completed":
-        await handleCheckoutSessionCompleted(
-          event.data.object as Stripe.Checkout.Session
-        );
-        break;
+//     // Handle the event
+//     switch (event.type) {
+//       case "checkout.session.completed":
+//         await handleCheckoutSessionCompleted(
+//           event.data.object as Stripe.Checkout.Session
+//         );
+//         break;
 
-      case "payment_intent.payment_failed":
-        await handlePaymentFailed(event.data.object as Stripe.PaymentIntent);
-        break;
+//       case "payment_intent.payment_failed":
+//         await handlePaymentFailed(event.data.object as Stripe.PaymentIntent);
+//         break;
 
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
-    }
+//       default:
+//         console.log(`Unhandled event type: ${event.type}`);
+//     }
 
-    return ApiResponseUtil.success(res, {}, "Webhook handled successfully");
-  }
-);
+//     return ApiResponseUtil.success(res, {}, "Webhook handled successfully");
+//   }
+// );
 
-/**
- * Handle failed payment
- */
-const handlePaymentFailed = async (paymentIntent: Stripe.PaymentIntent) => {
-  try {
-    const payment = await Payment.findOne({
-      stripePaymentIntentId: paymentIntent.id,
-    });
+// /**
+//  * Handle failed payment
+//  */
+// const handlePaymentFailed = async (paymentIntent: Stripe.PaymentIntent) => {
+//   try {
+//     const payment = await Payment.findOne({
+//       stripePaymentIntentId: paymentIntent.id,
+//     });
 
-    if (payment) {
-      payment.status = "failed";
-      payment.failureReason = paymentIntent.last_payment_error?.message;
-      await payment.save();
+//     if (payment) {
+//       payment.status = "failed";
+//       payment.failureReason = paymentIntent.last_payment_error?.message;
+//       await payment.save();
 
-      console.log(`Payment failed for intent: ${paymentIntent.id}`);
-    }
-  } catch (error) {
-    console.error("Error handling payment failed:", error);
-  }
-};
+//       console.log(`Payment failed for intent: ${paymentIntent.id}`);
+//     }
+//   } catch (error) {
+//     console.error("Error handling payment failed:", error);
+//   }
+// };
 
-/**
- * Refund Stripe Payment Controller
- */
-export const refundStripePaymentController = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { paymentId } = req.params;
-    const { amount } = req.body; // Optional partial refund amount
+// /**
+//  * Refund Stripe Payment Controller
+//  */
+// export const refundStripePaymentController = asyncHandler(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const { paymentId } = req.params;
+//     const { amount } = req.body; // Optional partial refund amount
 
-    const payment = await Payment.findById(paymentId);
-    if (!payment) {
-      throw new NotFoundError("Payment not found");
-    }
+//     const payment = await Payment.findById(paymentId);
+//     if (!payment) {
+//       throw new NotFoundError("Payment not found");
+//     }
 
-    if (payment.status !== "completed") {
-      throw new BadRequestError("Can only refund completed payments");
-    }
+//     if (payment.status !== "completed") {
+//       throw new BadRequestError("Can only refund completed payments");
+//     }
 
-    if (!payment.stripePaymentIntentId) {
-      throw new BadRequestError("Payment intent ID not found");
-    }
+//     if (!payment.stripePaymentIntentId) {
+//       throw new BadRequestError("Payment intent ID not found");
+//     }
 
-    try {
-      const refundAmount = amount ? Math.round(amount * 100) : undefined;
+//     try {
+//       const refundAmount = amount ? Math.round(amount * 100) : undefined;
 
-      // Create refund in Stripe
-      const refund = await stripe.refunds.create({
-        payment_intent: payment.stripePaymentIntentId,
-        amount: refundAmount,
-      });
+//       // Create refund in Stripe
+//       const refund = await stripe.refunds.create({
+//         payment_intent: payment.stripePaymentIntentId,
+//         amount: refundAmount,
+//       });
 
-      // Update payment record
-      const refundedAmount = refund.amount / 100;
-      payment.refundedAmount = (payment.refundedAmount || 0) + refundedAmount;
-      payment.refundDate = new Date();
+//       // Update payment record
+//       const refundedAmount = refund.amount / 100;
+//       payment.refundedAmount = (payment.refundedAmount || 0) + refundedAmount;
+//       payment.refundDate = new Date();
 
-      if (payment.refundedAmount >= payment.amount) {
-        payment.status = "refunded";
+//       if (payment.refundedAmount >= payment.amount) {
+//         payment.status = "refunded";
 
-        // Remove user from course enrollment
-        const course = await Course.findById(payment.courseId);
-        if (course) {
-          course.enrolledStudents = course.enrolledStudents.filter(
-            (studentId) => !studentId.equals(payment.userId)
-          );
-          await course.save();
-        }
-      }
+//         // Remove user from course enrollment
+//         const course = await Course.findById(payment.courseId);
+//         if (course) {
+//           course.enrolledStudents = course.enrolledStudents.filter(
+//             (studentId) => !studentId.equals(payment.userId)
+//           );
+//           await course.save();
+//         }
+//       }
 
-      await payment.save();
+//       await payment.save();
 
-      return ApiResponseUtil.success(
-        res,
-        {
-          refundId: refund.id,
-          refundedAmount,
-          paymentStatus: payment.status,
-        },
-        "Refund processed successfully"
-      );
-    } catch (error) {
-      console.error("Refund processing error:", error);
-      throw new BadRequestError("Failed to process refund");
-    }
-  }
-);
+//       return ApiResponseUtil.success(
+//         res,
+//         {
+//           refundId: refund.id,
+//           refundedAmount,
+//           paymentStatus: payment.status,
+//         },
+//         "Refund processed successfully"
+//       );
+//     } catch (error) {
+//       console.error("Refund processing error:", error);
+//       throw new BadRequestError("Failed to process refund");
+//     }
+//   }
+// );
 
-/**
- * Get Stripe Session Details Controller
- */
-export const getStripeSessionDetailsController = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { sessionId } = req.params;
-    const userId = req.user?.id;
+// /**
+//  * Get Stripe Session Details Controller
+//  */
+// export const getStripeSessionDetailsController = asyncHandler(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const { sessionId } = req.params;
+//     const userId = req.user?.id;
 
-    if (!userId) {
-      throw new BadRequestError("User not authenticated");
-    }
+//     if (!userId) {
+//       throw new BadRequestError("User not authenticated");
+//     }
 
-    try {
-      const session = await stripe.checkout.sessions.retrieve(sessionId);
+//     try {
+//       const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-      const payment = await Payment.findOne({
-        stripeSessionId: sessionId,
-        userId,
-      }).populate("courseId", "title subtitle thumbnail");
+//       const payment = await Payment.findOne({
+//         stripeSessionId: sessionId,
+//         userId,
+//       }).populate("courseId", "title subtitle thumbnail");
 
-      if (!payment) {
-        throw new NotFoundError("Payment session not found");
-      }
+//       if (!payment) {
+//         throw new NotFoundError("Payment session not found");
+//       }
 
-      return ApiResponseUtil.success(
-        res,
-        {
-          session: {
-            id: session.id,
-            status: session.status,
-            paymentStatus: session.payment_status,
-            amountTotal: session.amount_total ? session.amount_total / 100 : 0,
-            currency: session.currency,
-          },
-          payment,
-        },
-        "Session details retrieved successfully"
-      );
-    } catch (error) {
-      console.error("Error retrieving session details:", error);
-      throw new BadRequestError("Failed to retrieve session details");
-    }
-  }
-);
+//       return ApiResponseUtil.success(
+//         res,
+//         {
+//           session: {
+//             id: session.id,
+//             status: session.status,
+//             paymentStatus: session.payment_status,
+//             amountTotal: session.amount_total ? session.amount_total / 100 : 0,
+//             currency: session.currency,
+//           },
+//           payment,
+//         },
+//         "Session details retrieved successfully"
+//       );
+//     } catch (error) {
+//       console.error("Error retrieving session details:", error);
+//       throw new BadRequestError("Failed to retrieve session details");
+//     }
+//   }
+// );
