@@ -1,0 +1,40 @@
+{
+  "badge": "All-in-One LMS Platform",
+  "heading": {
+    "before_highlight": "Empower Learning & Management with",
+    "highlight": "Learnova"
+  },
+  "subtext": "From interactive student experiences to robust admin controls, Learnova is your complete solution for building, managing, and scaling education online.",
+  "primary_button": "Get Started Free",
+  "secondary_button": "See How It Works",
+  "stats": [
+    {
+      "icon": "Star",
+      "text": "4.9/5",
+      "extra": "Average rating"
+    },
+    {
+      "icon": null,
+      "text": "20,000+ learners & educators",
+      "extra": null
+    },
+    {
+      "icon": null,
+      "text": "No setup fees, cancel anytime",
+      "extra": null
+    }
+  ],
+  "illustration": {
+    "main_image": "/assets/hero-image.jpg",
+    "bottom_left_card": {
+      "icon": "TrendingUp",
+      "title": "Course Completion",
+      "description": "+23% this month"
+    },
+    "top_right_card": {
+      "icon": "Users",
+      "title": "Active Users",
+      "description": "2,847 online"
+    }
+  }
+}
