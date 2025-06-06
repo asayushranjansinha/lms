@@ -142,7 +142,7 @@ export default function TermsPage() {
                 <CardContent className='prose dark:prose-invert max-w-none'>
                   <p>
                     The platform and all content and services provided on the
-                    platform are provided on an "as is" and "as available" basis
+                    platform are provided on an as is and as available basis,
                     without warranties of any kind, either express or implied.
                   </p>
                   <p>

@@ -23,6 +23,7 @@ export default async function ModuleViewPage({
   courseId,
   moduleId
 }: TModuleViewProps) {
+  // eslint-disable-next-line @next/next/no-assign-module-variable
   let module = null;
   let pageTitle = 'Add New Module';
 

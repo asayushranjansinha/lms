@@ -70,7 +70,7 @@ export default function StripePaymentPage() {
           </div>
           <h1 className='text-2xl font-bold tracking-tight'>Secure Payment</h1>
           <p className='text-muted-foreground'>
-            You'll be redirected to Stripe's secure checkout
+            You&apos;ll be redirected to Stripe&apos;s secure checkout
           </p>
         </div>
 
@@ -159,7 +159,7 @@ export default function StripePaymentPage() {
         {/* Additional Info */}
         <div className='text-center'>
           <p className='text-muted-foreground text-xs'>
-            You'll be redirected to Stripe's secure servers to complete your
+            You&apos;ll be redirected to Stripe&apos;s secure servers to complete your
             payment
           </p>
         </div>
