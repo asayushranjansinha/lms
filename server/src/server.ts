@@ -1,23 +1,22 @@
-import {PORT,NODE_ENV } from '@/config/env';
+import { PORT, NODE_ENV } from "@/config/env";
 import { app } from "./app";
-import { logger } from './config/logger';
-import { connectToDatabase, disconnectFromDatabase } from './config/database';
+import { logger } from "./config/logger";
+import { connectToDatabase, disconnectFromDatabase } from "./config/database";
 
 // Start Server
-async function startServer(){
+async function startServer() {
   try {
     await connectToDatabase();
-    app.listen(PORT,()=>{
+    app.listen(PORT, () => {
       logger.info(`Server started on port ${PORT}`);
       logger.info(`Server Started in ${NODE_ENV} mode`);
-    })
+    });
   } catch (error) {
     await disconnectFromDatabase();
     logger.error(`Failed to start server: ${error}`);
     process.exit(1);
   }
 }
-
 
 // Handle uncaught exceptions
 process.on("uncaughtException", (err: Error) => {
@@ -41,6 +40,5 @@ process.on("SIGTERM", () => {
   logger.info("👋 SIGTERM RECEIVED. Shutting down gracefully");
   process.exit(0);
 });
-
 
 startServer();

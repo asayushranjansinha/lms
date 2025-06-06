@@ -1,15 +1,14 @@
-import dotenv from 'dotenv';
-import path from 'path';
+import dotenv from "dotenv";
+import path from "path";
 
 // Load environment variables
-dotenv.config({ path: path.join(__dirname, '../../.env.local') });
-
+dotenv.config({ path: path.join(__dirname, "../../.env.local") });
 
 interface Config {
   NODE_ENV: "development" | "production" | "test";
   PORT: number;
   API_VERSION: string;
-  API_PREFIX:string;
+  API_PREFIX: string;
 
   MONGODB_URI: string;
   JWT_SECRET: string;
@@ -19,6 +18,8 @@ interface Config {
 
   // Client
   CLIENT_URL: string;
+  CLIENT_URL_1: string;
+  CLIENT_URL_2: string;
 
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: number;
@@ -36,7 +37,6 @@ interface Config {
   // Terms of Service
   TERMS_VERSION: string;
 
-
   // Stripe
   STRIPE_SECRET_KEY: string;
   STRIPE_PUBLISHABLE_KEY: string;
@@ -47,9 +47,9 @@ const requiredEnvVars = [
   "MONGODB_URI",
   "JWT_SECRET",
   "JWT_REFRESH_SECRET",
-  'STRIPE_SECRET_KEY',
-  'STRIPE_PUBLISHABLE_KEY',
-  'STRIPE_WEBHOOK_SECRET'
+  "STRIPE_SECRET_KEY",
+  "STRIPE_PUBLISHABLE_KEY",
+  "STRIPE_WEBHOOK_SECRET",
 ] as const;
 
 // Validate required environment variables
@@ -85,6 +85,8 @@ export const config: Config = {
 
   // Client Configuration
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:3000",
+  CLIENT_URL_1: process.env.CLIENT_URL_1!,
+  CLIENT_URL_2: process.env.CLIENT_URL_2!,
 
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: parseInt(
@@ -119,6 +121,8 @@ export const {
   MONGODB_URI,
   JWT_SECRET,
   CLIENT_URL,
+  CLIENT_URL_1,
+  CLIENT_URL_2,
   API_PREFIX,
   CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET,
