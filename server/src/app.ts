@@ -13,8 +13,8 @@ const app = express();
 
 const allowedOrigins = [
   config.CLIENT_URL,
-  "https://your-production-site.com",
-  "https://admin.yoursite.com",
+  config.CLIENT_URL_1,
+  config.CLIENT_URL_2,
 ];
 // Attach middleware and routes
 async function initializeMiddlewareAndRoutes() {
