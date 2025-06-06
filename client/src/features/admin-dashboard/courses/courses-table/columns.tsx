@@ -86,7 +86,7 @@ export const columns: ColumnDef<Course>[] = [
     meta: {
       label: 'Created By'
     },
-    cell: ({ cell }) => <p>{cell.getValue<Course['createdBy']>().name}</p>
+    cell: ({ cell }) => <p>{cell.getValue<Course['createdBy']>()?.name}</p>
   },
   {
     id: 'actions',

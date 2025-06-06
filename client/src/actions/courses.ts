@@ -37,6 +37,7 @@ export async function createCourse(values: CourseFormSchema) {
   );
 
   if (response.status === 'error') {
+    console.log('Server erorr while creating course', response.error);
     throw new Error(response.error!);
   }
 

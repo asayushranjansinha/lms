@@ -72,18 +72,18 @@ function CourseCard({ course }: CourseCardProps) {
         <div className='mb-4 flex items-center'>
           <Avatar className='mr-2 h-6 w-6'>
             <AvatarImage
-              src={course.createdBy.profilePicture || '/placeholder.svg'}
-              alt={course.createdBy.name}
+              src={course.createdBy?.profilePicture || '/placeholder.svg'}
+              alt={course.createdBy?.name}
             />
             <AvatarFallback className='text-xs'>
-              {course.createdBy.name
+              {course.createdBy?.name
                 .split(' ')
                 .map((n) => n[0])
                 .join('')}
             </AvatarFallback>
           </Avatar>
           <span className='text-foreground text-sm font-medium'>
-            {course.createdBy.name}
+            {course.createdBy?.name}
           </span>
         </div>
 
